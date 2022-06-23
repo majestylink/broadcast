@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block morecss %}
+<link href="{% static 'css/registercss.css' %}" rel="stylesheet">
+{% endblock morecss %}
+
+{% block body %}
+
+<body>
+
+<div class="form_wrapper">
+  <div class="form_container">
+    <div class="title_container">
+      <h2>Login</h2>
+    </div>
+    <div class="row clearfix">
+      <div class="">
+        <form method="post">{% csrf_token %}
+          <div class="input_field"> <span><i aria-hidden="true" class="fa fa-envelope"></i></span>
+            <input type="text" name="username" placeholder="Username" required />
+          </div>
+          <div class="input_field"> <span><i aria-hidden="true" class="fa fa-envelope"></i></span>
+            <input type="password" name="password" placeholder="Email" required />
+          </div>
+          {% if messages %} {% for message in messages %}
+          <span style="color: red"><strong>{{message}}</strong></span>
+          {% endfor %} {% endif %}
+          <p><a href="{% url 'accounts:password_reset' %}">Forgot Password?</a></p>
+          <p>Don't have an account yet? <a href="{% url 'accounts:sign-up' %}">Sign Up</a></p>
+          <input class="button" type="submit" value="Login" />
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %}

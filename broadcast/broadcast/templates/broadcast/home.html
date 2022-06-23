@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+{% load embed_video_tags %}
+
+{% block morecss %}
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+<link href="{% static 'fontawesome-free-5.15.3-web/css/all.min.css' %}" rel="stylesheet">
+{% endblock morecss %}
+
+{% block body %}
+
+<body>
+<div class="main-container">
+    {% if messages %} {% for message in messages %}
+<span>{{message}}</span>
+{% endfor %} {% endif %}
+    <div class="background-text">
+    </div>
+    <header class="header">
+        <a href="/" id="logo">Broadcast Platform</a>
+        <nav class="navbar">
+            <a href="/">home</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'core:broadcast' %}">Broadcasts</a>
+            <a href="{% url 'core:playlist' %}">Playlist</a>
+            <a href="{% url 'accounts:profile' %}">Profile</a>
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+            {% else %}
+            <a href="{% url 'accounts:login' %}">sign in</a>
+            <a href="{% url 'accounts:sign-up' %}">sign up</a>
+            {% endif %}
+        </nav>
+        <a href="#" id="menu-bars" class="fas fa-bars"></a>
+    </header>
+    <div class="taxi-image">
+        <img src="{% static 'images/D.png' %}" alt="">
+    </div>
+</div>
+
+<!-- home section -->
+<div class="home-container">
+    <div class="home-content">
+        <div class="inner-content">
+            <h3>best in city</h3>
+            <h2>{{sports.title}}</h2>
+            <p>The 2022 FIFA World Cup is scheduled to be the 22nd running of the FIFA World Cup competition, the quadrennial international men's football championship contested by the national teams of the member associations of FIFA. It is scheduled to take place in Qatar from 21 November to 18 December 2022.</p>
+            <a href="/" class="booknow">stay updated</a>
+        </div>
+        <div class="inner-content">
+                {% video sports.url 'small' %}
+
+        </div>
+    </div>
+</div>
+<!-- home section ended -->
+
+<!-- our tariff -->
+
+<div class="main-tariff">
+    <a href="{% url 'core:broadcast' %}"><h1>our <span>broadcasts</span></h1></a>
+    <div class="inner-tarrif">
+        <div class="tarrif-container" style="border: 1px solid gray">
+            <div class="inner-box">
+                <h2>{{sports.title}}</h2>
+                {% video sports.url 'small' %}
+                <h3 style="padding: 2rem">{{sports.genre}}</h3>
+                {% if sports.is_in_playlist %}
+                <button class="add-to-playlist" disabled>Already In Playlist</button>
+                {% else %}
+                <button class="add-to-playlist" onclick="addToFavorite('{{sports.id}}')">Add To Playlist</button>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="tarrif-container" style="border: 1px solid gray">
+            <div class="inner-box">
+                <h2>{{news.title}}</h2>
+                {% video news.url 'small' %}
+                <h3 style="padding-top: 2rem">{{news.genre}}</h3>
+                {% if news.is_in_playlist %}
+                <button class="add-to-playlist" disabled>Already In Playlist</button>
+                {% else %}
+                <button class="add-to-playlist" onclick="addToFavorite('{{news.id}}')">Add To Playlist</button>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="testimonials">
+    <a href="{% url 'core:playlist' %}"><h1 class="heading-test">Playlist</h1></a>
+    <div class="main-testimonials">
+        <div class="inner-test">
+            {% if playlist %}
+                {% for x in playlist %}
+                    {% video x.broadcast.url 'small' %}
+                {% endfor %}
+            {% else %}
+                <h1>No Item In Your Playlist</h1>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/script.js' %}" ></script>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}" ></script>
+
+
+</body>
+
+{% endblock body %}
+
+{% block extrajs %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    function addToFavorite(id) {
+        console.log("Called function")
+        $.ajax({
+            type:'POST',
+            url:"{% url 'core:add_to_favorite' %}",
+            data: {
+                id:id,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+                // csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]')
+            },
+
+            success:response => {
+                alert("Successfully added to your playlist")
+            }
+        })
+    }
+
+</script>
+{% endblock extrajs %}
